@@ -1,0 +1,200 @@
+import java.util.*;
+
+public class Variant9 {
+
+    // 1. Приветствие
+    public static void task1() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите имя: ");
+        String name = scanner.nextLine();
+        String formatted = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+        System.out.println("Привет, " + formatted + "!");
+    }
+
+    // 2. Удаление гласных
+    public static void task2() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите строку: ");
+        String input = scanner.nextLine();
+        String result = input.replaceAll("(?i)[aeiouаеёиоуыэюя]", "");
+        System.out.println("Без гласных: " + result);
+    }
+
+    // 3. Ряд квадратов от минимального числа до большего с шагом
+    public static void task3() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите два числа: ");
+        int a = scanner.nextInt();
+        int b = scanner.nextInt();
+        int start = Math.min(a, b);
+        int step = Math.abs(a - b);
+        for (int i = start; i <= Math.max(a, b); i += step) {
+            System.out.print((i * i) + " ");
+        }
+        System.out.println();
+    }
+
+    // 4. Три числа: начало, шаг, количество членов ряда
+    public static void task4() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите начало, шаг, количество: ");
+        int start = scanner.nextInt(), step = scanner.nextInt(), count = scanner.nextInt();
+        for (int i = 0; i < count; i++) {
+            System.out.print((start + i * step) + " ");
+        }
+        System.out.println();
+    }
+
+    // 5. Память на 3 числа
+    public static void task5() {
+        Scanner scanner = new Scanner(System.in);
+        int[] memory = new int[3];
+        int index = 0;
+        while (true) {
+            System.out.print("Введите число (или 'stop'): ");
+            String input = scanner.next();
+            if (input.equals("stop")) break;
+            int number = Integer.parseInt(input);
+            if (index < 3) {
+                memory[index++] = number;
+            } else {
+                int minIndex = 0;
+                for (int i = 1; i < 3; i++) {
+                    if (memory[i] < memory[minIndex]) minIndex = i;
+                }
+                memory[minIndex] = number;
+            }
+        }
+        System.out.println("Ячейки памяти: " + Arrays.toString(memory));
+    }
+
+    // 6. Удалить дубликаты слов
+    public static void task6() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите строку: ");
+        String[] words = scanner.nextLine().split(" ");
+        Set<String> seen = new HashSet<>();
+        for (String word : words) {
+            if (seen.contains(word)) continue;
+            System.out.print(word + " ");
+            seen.add(word);
+        }
+        System.out.println();
+    }
+
+    // 7. Преобразование регистра
+    public static void task7() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите строку: ");
+        String input = scanner.nextLine();
+        int upper = 0, lower = 0;
+        for (char c : input.toCharArray()) {
+            if (Character.isUpperCase(c)) upper++;
+            if (Character.isLowerCase(c)) lower++;
+        }
+        String result;
+        if (upper > lower)
+            result = input.toUpperCase();
+        else if (lower > upper)
+            result = input.toLowerCase();
+        else
+            result = input.toLowerCase();  // по условию
+        System.out.println("Результат: " + result);
+    }
+
+    // 8. Проверка скобок
+    public static void task8() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите строку со скобками: ");
+        String input = scanner.nextLine();
+        Stack<Character> stack = new Stack<>();
+        boolean valid = true;
+        for (char ch : input.toCharArray()) {
+            if (ch == '(') {
+                stack.push(ch);
+            } else if (ch == ')') {
+                if (stack.isEmpty()) {
+                    valid = false;
+                    break;
+                }
+                stack.pop();
+            }
+        }
+        System.out.println("Корректность: " + (valid && stack.isEmpty()));
+    }
+
+    // 9. Два массива вокруг максимума
+    public static void task9() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите числа: ");
+        String[] parts = scanner.nextLine().split(" ");
+        int[] arr = Arrays.stream(parts).mapToInt(Integer::parseInt).toArray();
+
+        int maxIndex = 0;
+        for (int i = 1; i < arr.length; i++)
+            if (arr[i] > arr[maxIndex]) maxIndex = i;
+
+        int[] left = Arrays.copyOfRange(arr, 0, maxIndex);
+        int[] right = Arrays.copyOfRange(arr, maxIndex + 1, arr.length);
+
+        System.out.println("Максимум: " + arr[maxIndex]);
+        System.out.println("Слева: " + Arrays.toString(left));
+        System.out.println("Справа: " + Arrays.toString(right));
+    }
+
+    // 10. Заполнение массива по кольцу (n=1, n+1, n+2,... внутрь)
+    public static void task10() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите высоту и ширину: ");
+        int m = scanner.nextInt();
+        int n = scanner.nextInt();
+        int[][] matrix = new int[m][n];
+
+        int num = 1;
+        int top = 0, bottom = m - 1, left = 0, right = n - 1;
+        while (top <= bottom && left <= right) {
+            for (int i = left; i <= right; i++) matrix[top][i] = num++;
+            top++;
+            for (int i = top; i <= bottom; i++) matrix[i][right] = num++;
+            right--;
+            if (top <= bottom) {
+                for (int i = right; i >= left; i--) matrix[bottom][i] = num++;
+                bottom--;
+            }
+            if (left <= right) {
+                for (int i = bottom; i >= top; i--) matrix[i][left] = num++;
+                left++;
+            }
+        }
+
+        // Сохраняем в файл
+        try {
+            java.io.PrintWriter writer = new java.io.PrintWriter("output.txt");
+            for (int[] row : matrix) {
+                for (int val : row) {
+                    writer.print(val + "\t");
+                }
+                writer.println();
+            }
+            writer.close();
+            System.out.println("Результат сохранен в output.txt");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Главный метод для тестирования задач
+    public static void main(String[] args) {
+        // Вызовите нужную задачу здесь
+        task1();
+        // task2();
+        // task3();
+        // task4();
+        // task5();
+        // task6();
+        // task7();
+        // task8();
+        // task9();
+        // task10();
+    }
+}
